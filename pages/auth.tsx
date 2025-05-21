@@ -32,14 +32,26 @@ function AuthPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (mode === 'login') {
-      await login({ variables: { username, password } });
-    } else {
-      await signup({ variables: { username, password } });
+    try {
+      if (mode === 'login') {
+        const { data } = await login({ variables: { username, password } });
+        if (data?.login) {
+          setUsername('');
+          setPassword('');
+          router.push('/');
+        }
+      } else {
+        const { data } = await signup({ variables: { username, password } });
+        if (data?.signup) {
+          setUsername('');
+          setPassword('');
+          router.push('/');
+        }
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      // Error is already handled by Apollo's error state
     }
-    setUsername('');
-    setPassword('');
-    router.push('/');
   };
 
   return (
